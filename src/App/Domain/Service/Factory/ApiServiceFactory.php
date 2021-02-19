@@ -5,7 +5,7 @@ namespace App\Domain\Service\Factory;
 use App\Domain\Exception\Api\ApiBaseUrlNotSetException;
 use App\Domain\Exception\Api\ClientNumberNotSetException;
 use App\Domain\Service\ApiService;
-use Aws\S3\S3Client;
+use App\Domain\Service\S3Service;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
 use Kevinrob\GuzzleCache\CacheMiddleware;
@@ -16,7 +16,6 @@ use Psr\Container\ContainerInterface;
 
 class ApiServiceFactory
 {
-
     public function __invoke(ContainerInterface $container): ApiService
     {
         $config = $container->get('config');
@@ -36,33 +35,17 @@ class ApiServiceFactory
             'base_uri' => $apiUrl
         ];
 
-        $cacheEnable = $config['guzzle_cache']['enable'] ?? false;
-        $this->setGuzzleCache($cacheEnable, $columnisConfig, $guzzleOptions);
+        $this->setGuzzleCache($config['guzzle_cache'], $container->get(S3Service::class), $guzzleOptions);
+
         return new ApiService(new GuzzleClient($guzzleOptions), $apiConfig['client_number']);
     }
 
-    private function setGuzzleCache(bool $cacheEnable, $columnisConfig, array &$guzzleOptions): void
+    private function setGuzzleCache(array $guzzleConfig, S3Service $s3Service, array &$guzzleOptions): void
     {
-        $columnisS3Config = $columnisConfig['s3_config'];
-        $key = $columnisS3Config['credentials']['key'] ?? null;
-        $secret = $columnisS3Config['credentials']['secret'] ?? null;
-        $bucket = $columnisS3Config['bucket'] ?? null;
-
-        if ($cacheEnable && $key !== null && $secret !== null && $bucket !== null) {
-            // Create default HandlerStack
+        if ($guzzleConfig['enable']) {
             $stack = HandlerStack::create();
-            // Add this middleware to the top with `push`
 
-            $client = new S3Client([
-                'credentials' => [
-                    'key'    => $key,
-                    'secret' => $secret
-                ],
-                'region'      => 'us-east-1',
-                'version'     => 'latest',
-            ]);
-
-            $adapter = new AwsS3V3Adapter($client, $bucket, $columnisS3Config['cache_folder']);
+            $adapter = new AwsS3V3Adapter($s3Service->getS3Client(), $s3Service->getBucket(), $guzzleConfig['cache_dir']);
             $stack->push(
                 new CacheMiddleware(
                     new PrivateCacheStrategy(

@@ -46,6 +46,7 @@
   "require": {
     "php": "^7.4",
     "ext-json": "*",
+    "aws/aws-sdk-php": "^3.173",
     "bref/bref": "^1.2",
     "composer/package-versions-deprecated": "^1.10.99",
     "doctrine/cache": "^1.10",
@@ -60,7 +61,7 @@
     "mezzio/mezzio": "^3.2.1",
     "mezzio/mezzio-fastroute": "^3.0.3",
     "mezzio/mezzio-helpers": "^5.3",
-    "mezzio/mezzio-twigrenderer": "^2.6",
+    "solcre/mezzio-smartyrenderer": "dev-main",
     "vlucas/phpdotenv": "^5.3"
   },
   "require-dev": {

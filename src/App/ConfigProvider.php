@@ -9,11 +9,13 @@ use App\Domain\Service\Factory\ApiServiceFactory;
 use App\Domain\Service\Factory\PageAssetServiceFactory;
 use App\Domain\Service\Factory\PageBreakpointServiceFactory;
 use App\Domain\Service\Factory\PageServiceFactory;
+use App\Domain\Service\Factory\S3ServiceFactory;
 use App\Domain\Service\Factory\TemplateAssetsResolverFactory;
 use App\Domain\Service\Factory\TemplateServiceFactory;
 use App\Domain\Service\PageAssetService;
 use App\Domain\Service\PageBreakpointService;
 use App\Domain\Service\PageService;
+use App\Domain\Service\S3Service;
 use App\Domain\Service\TemplateAssetsResolver;
 use App\Domain\Service\TemplateService;
 use App\Domain\Utils\ArrayExtension;
@@ -55,7 +57,8 @@ class ConfigProvider
                 ApiService::class              => ApiServiceFactory::class,
                 PageAssetService::class        => PageAssetServiceFactory::class,
                 PageBreakpointService::class   => PageBreakpointServiceFactory::class,
-                TemplateAssetsResolver::class  => TemplateAssetsResolverFactory::class
+                TemplateAssetsResolver::class  => TemplateAssetsResolverFactory::class,
+                S3Service::class               => S3ServiceFactory::class
             ],
         ];
     }

@@ -12,14 +12,14 @@ return [
                 'key'    => $_ENV['S3_KEY'] ?? null,
                 'secret' => $_ENV['S3_SECRET'] ?? null,
             ],
-            'bucket'       => '',
-            'cache_folder' => ''
+            'bucket'       => ''
         ],
     ],
     'asset_manager' => [
         'cache_dir' => '',
     ],
     'guzzle_cache'  => [
-        'enable' => 1
+        'enable' => 1,
+        'cache_dir' => 'cache',
     ],
 ];
