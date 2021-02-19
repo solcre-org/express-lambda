@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'columnis'      => [
+        'api_settings' => [
+            'client_number' => '',
+            'api_base_url'  => '',
+            'ip'            => ''
+        ],
+        's3_config'    => [
+            'credentials'  => [
+                'key'    => $_ENV['S3_KEY'] ?? null,
+                'secret' => $_ENV['S3_SECRET'] ?? null,
+            ],
+            'bucket'       => '',
+            'cache_folder' => ''
+        ],
+    ],
+    'asset_manager' => [
+        'cache_dir' => '',
+    ],
+    'guzzle_cache'  => [
+        'enable' => 1
+    ],
+];

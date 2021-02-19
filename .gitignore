@@ -1,0 +1,9 @@
+config/autoload/columnis.local.php
+.env
+/.phpcs-cache
+/.phpunit.result.cache
+/clover.xml
+/coveralls-upload.json
+/phpunit.xml
+vendor/
+.idea/

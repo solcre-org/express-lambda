@@ -1,0 +1,17 @@
+service: express
+provider:
+  name: aws
+  runtime: provided.al2
+  environment:
+    S3_KEY: ${ssm:s3_key}
+    S3_SECRET: ${ssm:s3_secret}
+plugins:
+  - ./vendor/bref/bref
+functions:
+  app:
+    handler: public/index.php
+    memorySize: 2048
+    layers:
+      - ${bref:layer.php-74-fpm}
+    events:
+      - httpApi: '*'
