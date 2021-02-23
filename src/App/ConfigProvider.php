@@ -6,12 +6,14 @@ namespace App;
 
 use App\Domain\Service\ApiService;
 use App\Domain\Service\Factory\ApiServiceFactory;
+use App\Domain\Service\Factory\LogServiceFactory;
 use App\Domain\Service\Factory\PageAssetServiceFactory;
 use App\Domain\Service\Factory\PageBreakpointServiceFactory;
 use App\Domain\Service\Factory\PageServiceFactory;
 use App\Domain\Service\Factory\S3ServiceFactory;
 use App\Domain\Service\Factory\TemplateAssetsResolverFactory;
 use App\Domain\Service\Factory\TemplateServiceFactory;
+use App\Domain\Service\LogService;
 use App\Domain\Service\PageAssetService;
 use App\Domain\Service\PageBreakpointService;
 use App\Domain\Service\PageService;
@@ -51,14 +53,14 @@ class ConfigProvider
                 'ArrayExtension' => ArrayExtension::class
             ],
             'factories'  => [
-                Handler\HomePageHandler::class => Handler\HomePageHandlerFactory::class,
-                TemplateService::class         => TemplateServiceFactory::class,
-                PageService::class             => PageServiceFactory::class,
-                ApiService::class              => ApiServiceFactory::class,
-                PageAssetService::class        => PageAssetServiceFactory::class,
-                PageBreakpointService::class   => PageBreakpointServiceFactory::class,
-                TemplateAssetsResolver::class  => TemplateAssetsResolverFactory::class,
-                S3Service::class               => S3ServiceFactory::class
+                TemplateService::class        => TemplateServiceFactory::class,
+                PageService::class            => PageServiceFactory::class,
+                ApiService::class             => ApiServiceFactory::class,
+                PageAssetService::class       => PageAssetServiceFactory::class,
+                PageBreakpointService::class  => PageBreakpointServiceFactory::class,
+                TemplateAssetsResolver::class => TemplateAssetsResolverFactory::class,
+                S3Service::class              => S3ServiceFactory::class,
+                LogService::class             => LogServiceFactory::class
             ],
         ];
     }
@@ -70,10 +72,7 @@ class ConfigProvider
     {
         return [
             'paths' => [
-                'app'       => ['templates/app'],
-                'error'     => ['templates/error'],
-                'layout'    => ['templates/layout'],
-                'templates' => ['public/templates'],
+                'templates' => ['templates/'],
             ],
         ];
     }

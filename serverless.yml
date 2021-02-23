@@ -15,3 +15,7 @@ functions:
       - ${bref:layer.php-74-fpm}
     events:
       - httpApi: '*'
+      - schedule:
+          rate: rate(5 minutes)
+          input:
+            warmer: true

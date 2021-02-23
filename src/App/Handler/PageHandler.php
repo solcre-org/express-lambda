@@ -7,11 +7,11 @@ namespace App\Handler;
 use App\Domain\Entity\Page;
 use App\Domain\Entity\Template;
 use App\Domain\Exception\Page\PageWithoutTemplateException;
+use App\Domain\Service\LogService;
 use App\Domain\Service\PageBreakpointService;
 use App\Domain\Service\PageService;
 use App\Domain\Service\TemplateService;
 use Exception;
-use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -26,6 +26,7 @@ class PageHandler implements RequestHandlerInterface
     private TemplateRendererInterface $templateRenderer;
     private TemplateService $templateService;
     private PageBreakpointService $pageBreakpointService;
+    private LogService $logService;
 
     private const COLUMNIS_PAGE_ENDPOINT_KEY = 'columnis.rest.pages';
     private const COLUMNIS_CONFIGURATION_ENDPOINT_KEY = 'columnis.rest.configuration';
@@ -36,63 +37,74 @@ class PageHandler implements RequestHandlerInterface
     /**
      * PagesAction constructor.
      *
-     * @param $pageService
-     * @param $templateRenderer
-     * @param $templateService
-     * @param $pageBreakpointService
+     * @param PageService $pageService
+     * @param TemplateRendererInterface $templateRenderer
+     * @param TemplateService $templateService
+     * @param PageBreakpointService $pageBreakpointService
+     * @param LogService $logService
      */
     public function __construct(
         PageService $pageService,
         TemplateRendererInterface $templateRenderer,
         TemplateService $templateService,
-        PageBreakpointService $pageBreakpointService
+        PageBreakpointService $pageBreakpointService,
+        LogService $logService
     ) {
         $this->pageService = $pageService;
         $this->templateRenderer = $templateRenderer;
         $this->templateService = $templateService;
         $this->pageBreakpointService = $pageBreakpointService;
+        $this->logService = $logService;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $pageId = (int)$request->getAttribute('pageId');
-        $lang = $request->getAttribute('lang');
-        $queryParams = $request->getQueryParams();
-        $queryParams['lang'] = $lang;
-        $cookies = $request->getCookieParams();
-        $accessToken = null;
-        if (! empty($cookies['columnis_token'])) {
-            $accessToken = $cookies['columnis_token'];
+        try {
+            $pageId = (int)$request->getAttribute('pageId');
+            $lang = $request->getAttribute('lang');
+            $queryParams = $request->getQueryParams();
+            $queryParams['lang'] = $lang;
+            $cookies = $request->getCookieParams();
+            $accessToken = null;
+            if (! empty($cookies['columnis_token'])) {
+                $accessToken = $cookies['columnis_token'];
+            }
+            $queryParams['accessToken'] = $accessToken;
+
+            $generatePageData = $this->fetchPageData($pageId, $queryParams);
+
+            if (! empty($generatePageData)) {
+                $debug = ! empty($queryParams['debug']) ? (bool)$queryParams['debug'] : false;
+                if ($debug) {
+                    return new JsonResponse($generatePageData);
+                }
+
+                $pageData = array_values($generatePageData[self::COLUMNIS_PAGE_ENDPOINT_KEY])[0];
+
+//            try {
+//                $template = $this->templateService->createFromData($pageData);
+//            } catch (Exception $e) {
+//                throw $e;
+//            }
+//
+//            $page = $this->createPage($pageId, $pageData, $template);
+//            $template = $page->getTemplate();
+
+                $pageData['page']['breakpoint_file'] = $this->getBreakpoints($generatePageData);
+
+//            if ($this->templateService->isValid($page->getTemplate())) {
+//                $this->setPageAssets($page, $pageData);
+//                $templateFilename = $this->getTemplateName($template);
+//                $templatePath = 'templates::' . $templateFilename;
+//                $template = $this->templateRenderer->render($templatePath, ['data' => $pageData]);
+//                return new HtmlResponse($template);
+//            }
+            }
+        } catch (Exception $exception) {
+            $this->logService->error($exception->getMessage());
+            unset($exception);
         }
-        $queryParams['accessToken'] = $accessToken;
 
-        $pageData = $this->fetchPageData($pageId, $queryParams);
-
-        if (! empty($pageData)) {
-            $debug = ! empty($queryParams['debug']) ? (bool)$queryParams['debug'] : false;
-            if ($debug) {
-                return new JsonResponse($pageData);
-            }
-
-            try {
-                $template = $this->templateService->createFromData($pageData);
-            } catch (Exception $e) {
-                throw $e;
-            }
-
-            $page = $this->createPage($pageId, $pageData, $template);
-            $template = $page->getTemplate();
-
-            $pageData['page']['breakpoint_file'] = $this->getBreakpoints($pageData);
-
-            if ($this->templateService->isValid($page->getTemplate())) {
-                $this->setPageAssets($page, $pageData);
-                $templateFilename = $this->getTemplateName($template);
-                $templatePath = 'templates::' . $templateFilename;
-                $template = $this->templateRenderer->render($templatePath, ['data' => $pageData]);
-                return new HtmlResponse($template);
-            }
-        }
 
         return new JsonResponse([], 404);
     }

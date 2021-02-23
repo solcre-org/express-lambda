@@ -7,3 +7,4 @@ config/autoload/columnis.local.php
 /phpunit.xml
 vendor/
 .idea/
+/.serverless/

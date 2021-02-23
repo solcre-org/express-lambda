@@ -31,4 +31,14 @@ class S3Service
         return $this->bucket;
     }
 
+    public function listContents(): array
+    {
+        $result = [];
+
+        $result = $this->s3Client->listObjectsV2();
+        die;
+
+        return $result;
+    }
+
 }

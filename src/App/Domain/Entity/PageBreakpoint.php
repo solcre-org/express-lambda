@@ -7,7 +7,7 @@ use App\Domain\Exception\Templates\PathNotFoundException;
 
 class PageBreakpoint
 {
-    public const BREAKPOINT_FILE = 'breakpoints.twig';
+    public const BREAKPOINT_FILE_NAME = 'breakpoints';
     public const BREAKPOINT_DIR = 'breakpoints';
 
     private int $idPage;
