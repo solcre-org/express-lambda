@@ -64,7 +64,6 @@
     "mezzio/mezzio-fastroute": "^3.0.3",
     "mezzio/mezzio-helpers": "^5.3",
     "monolog/monolog": "^2.2",
-    "mrclay/minify": "^3.0",
     "solcre/mezzio-smartyrenderer": "dev-main",
     "vlucas/phpdotenv": "^5.3"
   },

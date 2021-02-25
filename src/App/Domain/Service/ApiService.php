@@ -5,7 +5,6 @@ namespace App\Domain\Service;
 use App\Domain\Entity\ApiResponse;
 use App\Domain\Exception\Api\ApiRequestException;
 use App\Domain\Exception\Api\UnauthorizedException;
-use GuzzleHttp\Client;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException as GuzzleRequestException;
@@ -15,14 +14,15 @@ use function is_array;
 
 class ApiService
 {
-
     protected GuzzleClient $httpClient;
     protected string $clientNumber;
+    protected LogService $logService;
 
-    public function __construct(GuzzleClient $httpClient, string $clientNumber)
+    public function __construct(GuzzleClient $httpClient, string $clientNumber, LogService $logService)
     {
         $this->httpClient = $httpClient;
         $this->clientNumber = $clientNumber;
+        $this->logService = $logService;
     }
 
     /**
@@ -51,6 +51,7 @@ class ApiService
             }
 
         } catch (GuzzleRequestException $e) {
+            $this->logService->error($e->getMessage());
             throw $this->createException($e);
         }
         return $apiResponse;
@@ -90,25 +91,6 @@ class ApiService
         return array_combine($matches[1], $matches[2]);
     }
 
-    /**
-     * Returns the Guzzle Client
-     *
-     * @return Client
-     */
-    public function getHttpClient(): Client
-    {
-        return $this->httpClient;
-    }
-
-    /**
-     * Sets the Guzzle Client
-     *
-     * @param GuzzleClient $httpClient
-     */
-    public function setHttpClient(GuzzleClient $httpClient): void
-    {
-        $this->httpClient = $httpClient;
-    }
 
     public function buildOptions(array $params = null, array $queryString = null, array $headers = null): array
     {
@@ -139,16 +121,6 @@ class ApiService
     public function getClientNumber(): string
     {
         return $this->clientNumber;
-    }
-
-    /**
-     * Sets the Client Number of Columnis Api
-     *
-     * @param string $clientNumber
-     */
-    public function setClientNumber(string $clientNumber): void
-    {
-        $this->clientNumber = $clientNumber;
     }
 
     public function parseLang($fullLang): string

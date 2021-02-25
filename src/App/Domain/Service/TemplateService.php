@@ -11,22 +11,28 @@ use function file_exists;
 class TemplateService
 {
     public const DEFINITION_FILE = 'def.json';
-    public const MAIN_FILE = 'main.twig';
+    public const MAIN_FILE = 'main';
     private static string $templateInfoFile = 'def.json';
     private static string $commonInfoFile = 'common.json';
     private array $templatesPathStack;
     private PageAssetService $pageAssetService;
+    private string $extension;
 
     /**
      * TemplateService constructor.
      *
-     * @param array            $templatesPathStack
+     * @param array $templatesPathStack
      * @param PageAssetService $pageAssetService
+     * @param string $extension
      */
-    public function __construct(array $templatesPathStack, PageAssetService $pageAssetService)
-    {
+    public function __construct(
+        array $templatesPathStack,
+        PageAssetService $pageAssetService,
+        string $extension
+    ) {
         $this->templatesPathStack = $templatesPathStack;
         $this->pageAssetService = $pageAssetService;
+        $this->extension = $extension;
     }
 
     public function getTemplates(): array
@@ -76,19 +82,19 @@ class TemplateService
      *
      * @param array $data
      *
+     * @return Template
      * @throws Exception
      *
-     * @return Template
      */
     public function createFromData(array $data): Template
     {
-        if (isset($data['template']) && !empty($data['template'])) {
+        if (isset($data['template']) && ! empty($data['template'])) {
             $templateName = $data['template'];
         } else {
             throw new TemplateNameNotSetException('Template not set in page response.');
         }
 
-        if (isset($data['template_path']) && !empty($data['template_path'])) {
+        if (isset($data['template_path']) && ! empty($data['template_path'])) {
             $path = $data['template_path'];
         } else {
             $path = $this->getExistantTemplatePath($templateName);
@@ -164,15 +170,15 @@ class TemplateService
     public function isValid(Template $template): bool
     {
         $templatePath = $template->getPath();
-        if (!is_dir($templatePath)) {
+        if (! is_dir($templatePath)) {
             return false;
         }
         $definitionFile = static::getDefinitionFile($template->getPath());
-        if (!is_file($definitionFile)) {
+        if (! is_file($definitionFile)) {
             return false;
         }
         $mainFile = $this->getMainFile($template);
-        if (!is_file($mainFile)) {
+        if (! is_file($mainFile)) {
             return false;
         }
         return true;
@@ -194,7 +200,7 @@ class TemplateService
      * Returns the path to the main file
      *
      * @param Template $template
-     * @param boolean  $withPath if false, will return just the main file
+     * @param boolean $withPath if false, will return just the main file
      *
      * @return string
      */
@@ -206,5 +212,10 @@ class TemplateService
     public function getPublicPath(): string
     {
         return $this->pageAssetService->getPublicPath();
+    }
+
+    public function getTemplateMainName(string $name): string
+    {
+        return $name . DIRECTORY_SEPARATOR . self::MAIN_FILE . $this->extension;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Domain\Service\Factory;
 use App\Domain\Exception\Api\ApiBaseUrlNotSetException;
 use App\Domain\Exception\Api\ClientNumberNotSetException;
 use App\Domain\Service\ApiService;
+use App\Domain\Service\LogService;
 use App\Domain\Service\S3Service;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
@@ -37,7 +38,13 @@ class ApiServiceFactory
 
         $this->setGuzzleCache($config['guzzle_cache'], $container->get(S3Service::class), $guzzleOptions);
 
-        return new ApiService(new GuzzleClient($guzzleOptions), $apiConfig['client_number']);
+        $logService = $container->get(LogService::class);
+
+        return new ApiService(
+            new GuzzleClient($guzzleOptions),
+            $apiConfig['client_number'],
+            $logService
+        );
     }
 
     private function setGuzzleCache(array $guzzleConfig, S3Service $s3Service, array &$guzzleOptions): void

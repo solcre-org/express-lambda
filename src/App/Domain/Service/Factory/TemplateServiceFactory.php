@@ -12,6 +12,8 @@ class TemplateServiceFactory
     {
         $templates = $container->get('config')['templates']['paths']['templates'];
         $pageAssetService = $container->get(PageAssetService::class);
-        return new TemplateService($templates, $pageAssetService);
+        $extension = $container->get('config')['templates']['extension'];
+
+        return new TemplateService($templates, $pageAssetService, $extension);
     }
 }

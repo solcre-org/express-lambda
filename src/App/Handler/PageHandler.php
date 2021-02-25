@@ -12,6 +12,7 @@ use App\Domain\Service\PageBreakpointService;
 use App\Domain\Service\PageService;
 use App\Domain\Service\TemplateService;
 use Exception;
+use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -81,24 +82,24 @@ class PageHandler implements RequestHandlerInterface
 
                 $pageData = array_values($generatePageData[self::COLUMNIS_PAGE_ENDPOINT_KEY])[0];
 
-//            try {
-//                $template = $this->templateService->createFromData($pageData);
-//            } catch (Exception $e) {
-//                throw $e;
-//            }
+//                try {
+//                    $template = $this->templateService->createFromData($pageData);
+//                } catch (Exception $e) {
+//                    throw $e;
+//                }
 //
-//            $page = $this->createPage($pageId, $pageData, $template);
-//            $template = $page->getTemplate();
+//                $page = $this->createPage($pageId, $pageData, $template);
+//                $template = $page->getTemplate();
 
-                $pageData['page']['breakpoint_file'] = $this->getBreakpoints($generatePageData);
+                $generatePageData['page']['breakpoint_file'] = $this->getBreakpoints($generatePageData);
 
-//            if ($this->templateService->isValid($page->getTemplate())) {
-//                $this->setPageAssets($page, $pageData);
-//                $templateFilename = $this->getTemplateName($template);
-//                $templatePath = 'templates::' . $templateFilename;
-//                $template = $this->templateRenderer->render($templatePath, ['data' => $pageData]);
-//                return new HtmlResponse($template);
-//            }
+//                if ($this->templateService->isValid($page->getTemplate())) {
+//                    $this->setPageAssets($page, $pageData);
+                $templateFilename = $this->getTemplateName($pageData['template']);
+                $templatePath = 'file:' . $templateFilename;
+                $template = $this->templateRenderer->render($templatePath, $generatePageData);
+                return new HtmlResponse($template);
+//                }
             }
         } catch (Exception $exception) {
             $this->logService->error($exception->getMessage());
@@ -134,9 +135,9 @@ class PageHandler implements RequestHandlerInterface
     }
 
 
-    private function getTemplateName(Template $template): string
+    private function getTemplateName(string $name): string
     {
-        return $template->getName() . DIRECTORY_SEPARATOR . TemplateService::MAIN_FILE;
+        return $this->templateService->getTemplateMainName($name);
     }
 
     private function createPage(int $pageId, array $data, Template $template): Page
