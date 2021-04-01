@@ -2,17 +2,17 @@
 
 namespace SolcreExpressLambda\Service\Factory;
 
-use SolcreExpressLambda\Service\S3Service;
 use Aws\S3\S3Client;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+use SolcreExpressLambda\Service\S3Service;
 
 class S3ServiceFactory
 {
     public function __invoke(ContainerInterface $container): S3Service
     {
         $config = $container->get('config');
-        $columnisS3Config = $config['columnis']['aws_credentials'];
+        $columnisS3Config = $config['columnis']['s3_config']['credentials'];
 
         $key = $columnisS3Config['key'] ?? null;
         $secret = $columnisS3Config['secret'] ?? null;

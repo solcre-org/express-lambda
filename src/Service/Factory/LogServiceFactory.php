@@ -2,12 +2,12 @@
 
 namespace SolcreExpressLambda\Service\Factory;
 
-use SolcreExpressLambda\Service\LogService;
 use Aws\CloudWatchLogs\CloudWatchLogsClient;
 use Maxbanton\Cwh\Handler\CloudWatch;
 use Monolog\Formatter\JsonFormatter;
 use Monolog\Logger;
 use Psr\Container\ContainerInterface;
+use SolcreExpressLambda\Service\LogService;
 
 class LogServiceFactory
 {
@@ -15,8 +15,8 @@ class LogServiceFactory
     {
         $config = $container->get('config');
 
-        $key = $config['columnis']['aws_credentials']['key'] ?? null;
-        $secret = $config['columnis']['aws_credentials']['secret'] ?? null;
+        $key = $config['columnis']['s3_config']['credentials']['key'] ?? null;
+        $secret = $config['columnis']['s3_config']['credentials']['secret'] ?? null;
 
         $sdkParams = [
             'region'      => 'us-east-1',

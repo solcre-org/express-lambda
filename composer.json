@@ -68,7 +68,6 @@
     "cs-fix": "phpcbf",
     "serve": "php -S 0.0.0.0:8080 -t public/",
     "test": "phpunit --colors=always",
-    "deploy-serverless": "composer development-disable && composer dumpautoload -o && serverless deploy && composer development-enable",
     "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
   }
 }
