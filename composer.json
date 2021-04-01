@@ -1,6 +1,7 @@
 {
   "name": "solcre/express-lambda",
   "description": "Solcre express",
+  "license": "BSD-3-Clause",
   "config": {
     "sort-packages": true
   },
