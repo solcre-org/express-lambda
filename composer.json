@@ -1,41 +1,8 @@
 {
-  "name": "mezzio/mezzio-skeleton",
-  "description": "Laminas mezzio skeleton. Begin developing PSR-15 middleware applications in seconds!",
-  "type": "project",
-  "license": "BSD-3-Clause",
-  "keywords": [
-    "laminas",
-    "mezzio",
-    "skeleton",
-    "middleware",
-    "psr",
-    "psr-7",
-    "psr-11",
-    "psr-15"
-  ],
-  "homepage": "https://mezzio.dev",
-  "support": {
-    "docs": "https://docs.mezzio.dev/mezzio/",
-    "issues": "https://github.com/mezzio/mezzio-skeleton/issues",
-    "source": "https://github.com/mezzio/mezzio-skeleton",
-    "rss": "https://github.com/mezzio/mezzio-skeleton/releases.atom",
-    "chat": "https://laminas.dev/chat",
-    "forum": "https://discourse.laminas.dev"
-  },
+  "name": "solcre/express-lambda",
+  "description": "Solcre express",
   "config": {
     "sort-packages": true
-  },
-  "extra": {
-    "laminas": {
-      "component-whitelist": [
-        "mezzio/mezzio",
-        "mezzio/mezzio-helpers",
-        "mezzio/mezzio-router",
-        "laminas/laminas-httphandlerrunner",
-        "mezzio/mezzio-fastroute",
-        "mezzio/mezzio-twigrenderer"
-      ]
-    }
   },
   "repositories": [
     {
